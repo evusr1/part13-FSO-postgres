@@ -1,13 +1,18 @@
 const blogRouter = require('express').Router()
 
-const Blog = require('../models/blog')
-//const logger = require('../utils/logger')
+const { Blog } = require('../models')
+const logger = require('../utils/logger')
 
 //const { userExtractor } = require('../utils/middleware')
 
+const blogFinder = async (request, response, next) => {
+  request.blog = await Blog.findByPk(request.params.id)
+  next()
+}
+
 blogRouter.get('/', async (request, response) => {
   const blogs = await Blog.findAll()
-    //.populate('user', { username: 1, name: 1 })
+  //.populate('user', { username: 1, name: 1 })
   response.json(blogs)
 })
 
@@ -27,9 +32,8 @@ blogRouter.post('/',/* userExtractor,*/ async (request, response) => {
   response.status(201).json(blog)
 })
 
-blogRouter.delete('/:id', /*userExtractor,*/ async (request, response) => {
-  const blog = await Blog.findByPk(request.params.id)
-  if(!blog)
+blogRouter.delete('/:id', blogFinder, /*userExtractor,*/ async (request, response) => {
+  if(!request.blog)
     return response.status(404).end()
 
   /*const user = request.user
@@ -40,26 +44,25 @@ blogRouter.delete('/:id', /*userExtractor,*/ async (request, response) => {
   user.blogs = user.blogs.filter(blogUser => blog.id !== blogUser.id)
   await user.save()*/
 
-  await blog.destroy()
+  await request.blog.destroy()
 
   response.status(204).end()
 })
 
-/*blogRouter.put('/:id', async (request, response) => {
+
+blogRouter.put('/:id', blogFinder, async (request, response) => {
+  if(!request.blog)
+    return request.status(404).end()
+
   const body = request.body
 
-  const blog = {
-    title: body.title,
-    author: body.author,
-    url: body.url,
-    likes: body.likes,
-    user: body.user
-  }
+  request.blog.likes = body.likes
 
-  logger.info(blog)
-  const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, { new: true, runValidators: true, context: 'query' })
+  logger.info(request.blog)
 
-  response.json(updatedBlog)
-})*/
+  request.blog.save()
+
+  response.json(request.blog)
+})
 
 module.exports = blogRouter

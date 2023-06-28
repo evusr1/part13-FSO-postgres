@@ -1,8 +1,5 @@
-const { Sequelize, Model, DataTypes } = require('sequelize')
-
-const config = require('../utils/config')
-
-const sequelize = new Sequelize(config.postgresURL)
+const { Model, DataTypes } = require('sequelize')
+const { sequelize } = require('../utils/db.js')
 
 class Blog extends Model {}
 
@@ -32,5 +29,4 @@ Blog.init({
   modelName: 'blog'
 })
 
-Blog.sync()
 module.exports = Blog

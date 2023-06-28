@@ -4,7 +4,7 @@ require('express-async-errors')
 const app = express()
 
 const cors = require('cors')
-const { tokenExtractor, errorHandler } = require('./utils/middleware')
+const { errorHandler } = require('./utils/middleware')
 
 const blogRouter = require('./controllers/blog')
 //const userRouter = require('./controllers/user')
@@ -14,7 +14,7 @@ const blogRouter = require('./controllers/blog')
 app.use(cors())
 app.use(express.json())
 
-app.use(tokenExtractor)
+//app.use(tokenExtractor)
 
 app.use('/api/blogs', blogRouter)
 //app.use('/api/users', userRouter)
