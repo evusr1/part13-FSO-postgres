@@ -1,9 +1,9 @@
 const blogRouter = require('express').Router()
 
-const { Blog } = require('../models')
+const { Blog, User } = require('../models')
 const logger = require('../utils/logger')
 
-//const { userExtractor } = require('../utils/middleware')
+const { userExtractor } = require('../utils/middleware')
 
 const blogFinder = async (request, response, next) => {
   request.blog = await Blog.findByPk(request.params.id)
@@ -11,38 +11,40 @@ const blogFinder = async (request, response, next) => {
 }
 
 blogRouter.get('/', async (request, response) => {
-  const blogs = await Blog.findAll()
-  //.populate('user', { username: 1, name: 1 })
+  const blogs = await Blog.findAll({
+    attributes: { exclude: ['userId'] },
+    include: {
+      model: User,
+      attributes: ['name']
+    }
+  })
   response.json(blogs)
 })
 
-blogRouter.post('/',/* userExtractor,*/ async (request, response) => {
-  //const user = request.user
+blogRouter.post('/', userExtractor, async (request, response) => {
+  const user = request.user
+  if(!user)
+    return response.status(401).json({ error: 'invalid user' })
 
   const blog = await Blog.create({
     title: request.body.title,
     author: request.body.author,
-    url: request.body.url
-    //user: user._id
+    url: request.body.url,
+    userId: user.id
   })
 
-  /*user.blogs = user.blogs.concat(savedBlog._id)
-  await user.save()*/
 
   response.status(201).json(blog)
 })
 
-blogRouter.delete('/:id', blogFinder, /*userExtractor,*/ async (request, response) => {
+blogRouter.delete('/:id', [  blogFinder, userExtractor ], async (request, response) => {
   if(!request.blog)
     return response.status(404).end()
 
-  /*const user = request.user
+  const user = request.user
 
-  if(blog.user.toString() !== user.id.toString())
+  if(request.blog.userId.toString() !== user.id.toString())
     return response.status(401).json({ error: 'token invalid' })
-
-  user.blogs = user.blogs.filter(blogUser => blog.id !== blogUser.id)
-  await user.save()*/
 
   await request.blog.destroy()
 
