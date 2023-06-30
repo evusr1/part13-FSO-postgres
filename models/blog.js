@@ -13,6 +13,10 @@ Blog.init({
     type: DataTypes.TEXT,
     allowNull: false
   },
+  author: {
+    type: DataTypes.TEXT,
+    allowNull: false
+  },
   url: {
     type: DataTypes.TEXT,
     allowNull: false

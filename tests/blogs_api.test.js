@@ -5,18 +5,19 @@ const bcrypt = require('bcrypt')
 const app = require('../app')
 const api = supertest(app)
 
-const Blog = require('../models/blog')
-const User = require('../models/user')
+const { Blog, User } = require('../models')
 
 const helper = require('./test_helper')
 
 
 describe('no login', () => {
   beforeEach(async () => {
-    await Blog.deleteMany({})
-
+    await Blog.destroy({
+      where: {},
+      truncate: true
+    })
     const blogObjects = helper.initialBlogs
-      .map(blog => new Blog(blog))
+      .map(blog => new Blog.create(blog))
 
     const promiseArray = blogObjects.map(blog => blog.save())
     await Promise.all(promiseArray)
@@ -80,8 +81,14 @@ describe('no login', () => {
 
 describe('with login', () => {
   beforeEach(async () => {
-    await User.deleteMany({})
-    await Blog.deleteMany({})
+    await Blog.destroy({
+      where: {},
+      truncate: true
+    })
+    await User.destroy({
+      where: {},
+      truncate: true
+    })
 
     const passwordHash = await bcrypt.hash('sekret', 10)
 
