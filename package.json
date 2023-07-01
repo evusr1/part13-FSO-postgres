@@ -8,7 +8,8 @@
     "start": "cross-env NODE_ENV=production node index.js",
     "dev": "cross-env NODE_ENV=development nodemon index.js",
     "eslint": "eslint .",
-    "start:test": "NODE_ENV=test node index.js"
+    "start:test": "NODE_ENV=test node index.js",
+    "migration:down": "node utils/rollback.js"
   },
   "author": "evusr1",
   "license": "MIT",
@@ -23,8 +24,8 @@
     "lodash": "^4.17.21",
     "nodemon": "^2.0.22",
     "pg": "^8.11.1",
-    "sequelize": "^6.32.1"
-
+    "sequelize": "^6.32.1",
+    "umzug": "^3.2.1"
   },
   "devDependencies": {
     "eslint": "^8.37.0",

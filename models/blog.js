@@ -25,11 +25,23 @@ Blog.init({
     type: DataTypes.INTEGER,
     allowNull: false,
     defaultValue: 0
+  },
+  year: {
+    type: DataTypes.INTEGER,
+    validate: {
+      min: 1991,
+      maxYear(value) {
+        let date = new Date()
+        if (value > date.getFullYear()) {
+          throw new Error('year cannot be more than current year')
+        }
+      }
+    }
   }
 }, {
   sequelize,
   underscored: true,
-  timestamps: false,
+  timestamps: true,
   modelName: 'blog'
 })
 

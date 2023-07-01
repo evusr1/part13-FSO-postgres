@@ -50,6 +50,7 @@ blogRouter.post('/', userExtractor, async (request, response) => {
     title: request.body.title,
     author: request.body.author,
     url: request.body.url,
+    year: request.body.year,
     userId: user.id
   })
 
