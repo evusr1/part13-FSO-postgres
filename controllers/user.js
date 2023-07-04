@@ -36,12 +36,50 @@ usersRouter.get('/', async (request, response) => {
   response.json(users)
 })
 
+usersRouter.get('/:id', async (request, response) => {
+  const user = await User.findByPk(request.params.id, {
+    include: [
+      {
+        model: Blog,
+        attributes: { exclude: ['userId'] }
+      },
+      {
+        model: Blog,
+        as: 'readings',
+        attributes: { exclude: ['userId'] },
+        through: {
+          attributes: []
+        }
+      }
+    ]
+  })
+
+  if(!user)
+    return response.status(404).end()
+
+  response.json(user)
+})
+
 usersRouter.post('/:username', async (request, response) => {
   const { username } = request.body
   const user = await User.findOne({
     where: {
       username: request.params.username
-    }
+    },
+    include: [
+      {
+        model: Blog,
+        attributes: { exclude: ['userId'] }
+      },
+      {
+        model: Blog,
+        as: 'readings',
+        attributes: { exclude: ['userId'] },
+        through: {
+          attributes: []
+        }
+      }
+    ]
   })
 
   if(!user)

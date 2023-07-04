@@ -1,5 +1,5 @@
 const authorRouter = require('express').Router()
-const { sequelize } = require('../utils/db.js')
+const { sequelize } = require('../utils/db')
 const { Blog } = require('../models')
 
 authorRouter.get('/', async (request, response) => {
