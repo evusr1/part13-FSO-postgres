@@ -38,6 +38,7 @@ usersRouter.get('/', async (request, response) => {
 
 usersRouter.get('/:id', async (request, response) => {
   const user = await User.findByPk(request.params.id, {
+    attributes: ['name', 'username'],
     include: [
       {
         model: Blog,
@@ -48,7 +49,8 @@ usersRouter.get('/:id', async (request, response) => {
         as: 'readings',
         attributes: { exclude: ['userId'] },
         through: {
-          attributes: []
+          attributes: ['id', 'isRead'],
+          as: 'readinglists'
         }
       }
     ]
