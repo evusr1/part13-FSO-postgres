@@ -6,7 +6,7 @@ const app = express()
 const cors = require('cors')
 const { errorHandler, tokenExtractor } = require('./utils/middleware')
 
-const { blogRouter, loginRouter, userRouter, authorRouter, readinglistsRouter } = require('./controllers')
+const { blogRouter, loginRouter, userRouter, authorRouter, readinglistsRouter, logoutRouter } = require('./controllers')
 
 
 app.use(cors())
@@ -19,6 +19,7 @@ app.use('/api/users', userRouter)
 app.use('/api/login', loginRouter)
 app.use('/api/authors', authorRouter)
 app.use('/api/readinglists', readinglistsRouter)
+app.use('/api/logout', logoutRouter)
 
 if (process.env.NODE_ENV === 'test') {
   const testingRouter = require('./controllers/testing')

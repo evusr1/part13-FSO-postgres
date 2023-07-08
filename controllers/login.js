@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const loginRouter = require('express').Router()
 
-const User = require('../models/user')
+const { User, Session } = require('../models')
 
 loginRouter.post('/', async (request, response) => {
   const { username, password } = request.body
@@ -15,6 +15,11 @@ loginRouter.post('/', async (request, response) => {
       include: ['passwordHash']
     }
   })
+
+  if(user.isDisabled)
+    return response.status(401).json({
+      error: 'user disabled'
+    })
 
   const passwordCorrect = user === null
     ? false
@@ -32,6 +37,12 @@ loginRouter.post('/', async (request, response) => {
   }
 
   const token = jwt.sign(userForToken, process.env.SECRET)
+
+  await Session.create({
+    userId: user.id,
+    sessionToken: token
+  })
+
 
   response
     .status(200)

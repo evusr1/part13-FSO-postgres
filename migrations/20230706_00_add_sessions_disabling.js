@@ -13,14 +13,15 @@ module.exports = {
         allowNull: false,
         references: { model: 'users', key: 'id' }
       },
-      blog_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: { model: 'blogs', key: 'id' }
-      },
       session_token: {
         type: DataTypes.STRING,
         allowNull: false
+      },
+      created_at: {
+        type: DataTypes.DATE
+      },
+      updated_at: {
+        type: DataTypes.DATE
       }
     })
 
