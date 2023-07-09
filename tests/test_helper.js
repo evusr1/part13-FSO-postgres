@@ -1,5 +1,4 @@
-const Blog = require('../models/blog')
-const User = require('../models/user')
+const { Blog, User }  = require('../models')
 
 const initialBlogs = [
   {
@@ -41,13 +40,13 @@ const initialBlogs = [
 ]
 
 const newUser = {
-  username: 'mluukai',
+  username: 'mluukai@test.com',
   name: 'Matti Luukainen',
   password: 'salainen'
 }
 
 const rootUser = {
-  username: 'root',
+  username: 'root@test.com',
   name: 'root',
   password: 'sekret'
 }
@@ -58,13 +57,13 @@ const newBlog = {
   url: 'http://www.tobedeleted.com',
   likes: 0,
   user: {
-    username: rootUser.username,
     name: rootUser.name
-  }
+  },
+  year: 2023
 }
 
 const blogsInDb = async () => {
-  const blogs = await Blog.find({})
+  const blogs = await Blog.findAll()
   return blogs.map(blog => blog.toJSON())
 }
 
@@ -77,7 +76,7 @@ const blogsInDb = async () => {
 }*/
 
 const usersInDb = async () => {
-  const users = await User.find({})
+  const users = await User.findAll()
   return users.map(user => user.toJSON())
 }
 
@@ -88,6 +87,9 @@ const sanitizeBlogs = (blogs) => {
     delete newBlog.id
     if(newBlog.user)
       delete newBlog.user.id
+
+    delete newBlog.createdAt
+    delete newBlog.updatedAt
 
     return newBlog
   })
