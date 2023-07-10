@@ -214,7 +214,7 @@ describe('no login', () => {
 
         expect(blogsAtEnd).not.toContainEqual(blogsToDelete)
       }, 100000)
-  
+
       test('non owner cannot delete a single blog post', async () => {
         const passwordHash = await bcrypt.hash(helper.newUser.password, 10)
         await User.create({ username: helper.newUser.username, passwordHash })

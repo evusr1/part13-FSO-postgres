@@ -16,6 +16,11 @@ loginRouter.post('/', async (request, response) => {
     }
   })
 
+  if(!user)
+    return response.status(401).json({
+      error: 'user does not exist'
+    })
+
   if(user.isDisabled)
     return response.status(401).json({
       error: 'user disabled'

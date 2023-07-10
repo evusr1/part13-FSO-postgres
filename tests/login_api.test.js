@@ -1,4 +1,3 @@
-const mongoose = require('mongoose')
 const jwt = require('jsonwebtoken')
 const supertest = require('supertest')
 const bcrypt = require('bcrypt')
@@ -6,20 +5,38 @@ const bcrypt = require('bcrypt')
 const app = require('../app')
 const api = supertest(app)
 
-const User = require('../models/user')
+const { User, Session, UserReading, Blog } = require('../models')
 const helper = require('./test_helper')
 
 beforeEach(async () => {
-  await User.deleteMany({})
+  try {
+    await Session.destroy({
+      where: {},
+    })
+
+    await UserReading.destroy({
+      where: {},
+    })
+
+    await Blog.destroy({
+      where: {},
+    })
+
+    await User.destroy({
+      where: {},
+    })
+  } catch(error) {
+    console.log(error)
+  }
 
   const passwordHash = await bcrypt.hash(helper.rootUser.password, 10)
-  const user = new User({
+  await User.create({
     username: helper.rootUser.username,
     name: helper.rootUser.name,
     passwordHash
   })
 
-  await user.save()
+
 })
 
 test('test valid login token', async () => {
@@ -60,8 +77,4 @@ test('fail with invalid login with unknown user', async () => {
     .send(user)
     .expect(401)
     .expect('Content-Type', /application\/json/)
-})
-
-afterAll(async () => {
-  await mongoose.connection.close()
 })
